@@ -1,6 +1,6 @@
-# EchoApp — FastAPI Portfolio Project
+# EchoApp — FastAPI Proof of Concept
 
-A clean, modular FastAPI backend demonstrating Python expertise, type-safe APIs, and testable architecture.
+A clean, modular FastAPI backend designed as a production-ready proof of concept, demonstrating type-safe APIs and testable architecture.
 
 ## Stack
 
