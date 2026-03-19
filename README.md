@@ -34,7 +34,7 @@ tests/
 requirements.txt
 ```
 
-## Running Locally
+## Install and run
 
 ```bash
 # Create and activate a virtual environment
