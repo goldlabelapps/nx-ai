@@ -10,6 +10,7 @@ from app.main import app
 client = TestClient(app)
 
 
+<<<<<<< copilot/sub-pr-7
 def _mock_db_dependency(rows=None):
     """Return a FastAPI dependency override that yields a mock DB connection."""
     if rows is None:
@@ -56,6 +57,17 @@ def test_root_returns_products_from_db() -> None:
         assert "Returned 1 products" in body["meta"]["message"]
     finally:
         app.dependency_overrides.clear()
+=======
+def test_root_returns_welcome_message() -> None:
+    """GET / should return a welcome message."""
+    response = client.get("/")
+    assert response.status_code == 200
+    json_data = response.json()
+    assert "meta" in json_data
+    assert "data" in json_data
+    assert "message" in json_data["meta"]
+    assert "NX AI" in json_data["meta"]["message"]
+>>>>>>> staging
 
 
 def test_health_returns_ok() -> None:
