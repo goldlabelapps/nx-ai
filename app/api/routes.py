@@ -18,10 +18,23 @@ class EchoResponse(BaseModel):
     echo: str
 
 
+
+import time
+import sys
+from app import __version__
+
 @router.get("/")
-def root() -> dict[str, str]:
-    """Return a welcome message for the API root."""
-    return {"message": "Welcome to NX AI!"}
+def root() -> dict:
+    """Return a structured welcome message for the API root."""
+    epoch = int(time.time() * 1000)
+    meta = {
+        "version": __version__,
+        "time": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()),
+        "epoch": epoch,
+        "severity": "success",
+        "message": "NX AI says hello.",
+    }
+    return {"meta": meta}
 
 
 @router.get("/health")
