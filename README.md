@@ -2,19 +2,7 @@
 
 A clean, production-ready and modular FastAPI application for [NX](https://goldlabel.pro?s=nx-ai) AI services.
 
-```sh
-# Start the development server
-uvicorn app.main:app --reload
-```
-
 [Public RESTful API](https://nx-ai.onrender.com) 
-
-## Interactive API Docs
-
-FastAPI automatically generates interactive documentation:
-
-- Swagger UI: <http://localhost:8000/docs>
-- ReDoc: <http://localhost:8000/redoc>
 
 ## Stack
 
@@ -24,7 +12,14 @@ FastAPI automatically generates interactive documentation:
 - **Pytest** — testing framework
 - **HTTPX / TestClient** — HTTP testing
 
-## Structure
+## Interactive API Docs
+
+FastAPI automatically generates interactive documentation:
+
+- Swagger UI: <http://localhost:8000/docs>
+- ReDoc: <http://localhost:8000/redoc>
+
+## Project Structure
 
 ```
 app/
@@ -77,3 +72,5 @@ curl -X POST http://localhost:8000/echo \
 ```bash
 pytest
 ```
+
+
