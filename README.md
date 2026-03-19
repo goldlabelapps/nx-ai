@@ -7,7 +7,7 @@ uvicorn app.main:app
 [Public RESTful API](https://nx-ai.onrender.com) 
 
 
-A clean, production-ready Python FastAPI app for [NX](https://goldlabel.pro?s=nx-ai) AI services and more
+Production-ready Python FastAPI app for [NX](https://goldlabel.pro?s=nx-ai) AI services and more
 
 - **Python 3.11+**
 - **FastAPI** — RESTful API framework
