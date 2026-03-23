@@ -22,7 +22,7 @@ def root() -> dict:
         "message": "Welcome to NX AI!"
     }
     endpoints = [
-        {"docs": "docs", "url": f"{base_url}/docs"},
+        {"name": "docs", "url": f"{base_url}/docs"},
         {"name": "health", "url": f"{base_url}/health"},
         {"name": "products", "url": f"{base_url}/products"}
     ]

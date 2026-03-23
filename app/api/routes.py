@@ -14,7 +14,7 @@ from app.api.root import router as root_router
 from app.api.health import router as health_router
 from app.api.echo import router as echo_router
 from app.api.import_csv import router as import_csv_router
-from app.api.products import router as products_router
+from app.api.products.products import router as products_router
 
 router.include_router(root_router)
 router.include_router(health_router)
