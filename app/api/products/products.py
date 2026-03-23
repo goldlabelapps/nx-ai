@@ -1,5 +1,6 @@
 from app import __version__
 from fastapi import APIRouter
+from fastapi import status
 import os, time
 import psycopg2
 from dotenv import load_dotenv
