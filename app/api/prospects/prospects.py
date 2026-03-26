@@ -24,13 +24,13 @@ def root() -> dict:
         },
     ]
     try:
-        cur.execute('SELECT * FROM prospects;')
+        cur.execute('SELECT * FROM prospects LIMIT 200;')
         if cur.description is None:
             prospects = []
         else:
             columns = [desc[0] for desc in cur.description]
             prospects = [dict(zip(columns, row)) for row in cur.fetchall()]
-        meta = make_meta("success", "Prospects List")
+        meta = make_meta("success", "Prospects List (max 200)")
         result = {"meta": meta, "data": prospects}
     except Exception as e:
         import psycopg2
