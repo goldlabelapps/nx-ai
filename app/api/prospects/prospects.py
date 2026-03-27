@@ -34,6 +34,7 @@ def get_unique_fields(fields: list[str] = Query(..., description="List of field 
         cur.close()
         conn.close()
 
+
 @router.get("/prospects")
 def root() -> dict:
     """Return all prospects table records"""
@@ -72,3 +73,12 @@ def root() -> dict:
         cur.close()
         conn.close()
     return result
+
+
+# New endpoint: /prospects/init
+@router.get("/prospects/init")
+def prospects_init() -> dict:
+    """Initialize prospects (placeholder endpoint)"""
+    meta = make_meta("success", "Initialized prospects (placeholder)")
+    data = {"message": "This is a placeholder for prospects/init."}
+    return {"meta": meta, "data": data}
