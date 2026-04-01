@@ -42,9 +42,9 @@ def root() -> dict:
         conn = get_db_connection_direct()
         try:
             with conn.cursor() as cur:
-                cur.execute("SELECT id, prompt, response, duration_ms, llm, timestamp FROM prompts ORDER BY id DESC;")
+                cur.execute("SELECT id, prompt, response, llm, started, completed, timestamp FROM prompts ORDER BY id DESC;")
                 rows = cur.fetchall()
-                keys = ["id", "prompt", "response", "duration_ms", "llm", "timestamp"]
+                keys = ["id", "prompt", "response", "llm", "started", "completed", "timestamp"]
                 for row in rows:
                     data.append(dict(zip(keys, row)))
         finally:
@@ -59,21 +59,24 @@ def create_prompt(prompt_in: PromptCreate = Body(...)):
     """Create a new prompt record in the prompts table."""
     from app.utils.db import get_db_connection_direct
     import psycopg2
+    import time
     conn = get_db_connection_direct()
+    started = prompt_in.started if prompt_in.started is not None else int(time.time())
     try:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                INSERT INTO prompts (prompt, response, duration_ms, llm, timestamp)
-                VALUES (%s, %s, %s, %s, COALESCE(%s, NOW()))
-                RETURNING id, prompt, response, duration_ms, llm, timestamp
+                INSERT INTO prompts (prompt, response, llm, started, completed, timestamp)
+                VALUES (%s, %s, %s, %s, %s, COALESCE(%s, NOW()))
+                RETURNING id, prompt, response, llm, started, completed, timestamp
                 """,
                 (
                     prompt_in.prompt,
-                    prompt_in.response,
-                    prompt_in.duration_ms,
+                    None,  # Always set response to NULL initially
                     prompt_in.llm,
-                    prompt_in.timestamp,
+                    started,
+                    None,  # completed is NULL initially
+                    None,  # timestamp
                 )
             )
             row = cur.fetchone()
@@ -84,7 +87,7 @@ def create_prompt(prompt_in: PromptCreate = Body(...)):
     finally:
         conn.close()
     if row:
-        keys = ["id", "prompt", "response", "duration_ms", "llm", "timestamp"]
+        keys = ["id", "prompt", "response", "llm", "started", "completed", "timestamp"]
         return dict(zip(keys, row))
     return {"error": "Failed to insert prompt."}
 
