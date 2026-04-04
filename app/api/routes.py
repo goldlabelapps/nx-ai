@@ -16,10 +16,10 @@ from app.api.resend.resend import router as resend_router
 from app.api.prompts.prompts import router as prompts_router
 from app.api.prospects.prospects import router as prospects_router
 from app.api.prospects.search import router as prospects_search_router
-from app.api.prospects.database.alter import router as prospects_alter_router
-from app.api.prospects.database.seed import router as prospects_seed_router
-from app.api.prospects.database.empty import router as prospects_empty_router
-from app.api.prospects.database.process import router as prospects_process_router
+from app.utils.prospects.database.alter import router as prospects_alter_router
+from app.utils.prospects.database.seed import router as prospects_seed_router
+from app.utils.prospects.database.empty import router as prospects_empty_router
+from app.utils.prospects.database.process import router as prospects_process_router
 
 router.include_router(root_router)
 router.include_router(resend_router)
