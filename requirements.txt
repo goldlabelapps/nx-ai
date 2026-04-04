@@ -8,3 +8,4 @@ python-dotenv>=1.0.0
 psycopg2-binary>=2.9.0
 python-multipart>=0.0.20
 Faker>=25.2.0
+google-genai>=0.3.0
