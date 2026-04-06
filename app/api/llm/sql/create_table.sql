@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS llm (
 	duration FLOAT,
 	time TIMESTAMPTZ DEFAULT NOW(),
 	data JSONB,
-	model TEXT
+	model TEXT,
+	prospect_id INTEGER REFERENCES prospects(id)
 );
