@@ -8,7 +8,9 @@ router = APIRouter()
 base_url = os.getenv("BASE_URL", "http://localhost:8000")
 
 
-# Refactored GET /prospects endpoint to return paginated, filtered, and ordered results
+
+
+# Gel all flagged prspects
 @router.get("/prospects/flagged")
 def get_prospects(
     page: int = Query(1, ge=1, description="Page number (1-based)"),
