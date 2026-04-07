@@ -1,7 +1,8 @@
 import os
-from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi import APIRouter, HTTPException, Query, Request, Depends
 from app.utils.make_meta import make_meta
 from app.utils.db import get_db_connection_direct
+from app.utils.api_key_auth import get_api_key
 
 router = APIRouter()
 
@@ -10,6 +11,7 @@ def get_llm_records(
     request: Request,
     page: int = Query(1, ge=1, description="Page number (1-based)"),
     page_size: int = Query(10, ge=1, le=100, description="Records per page")
+    , api_key: str = Depends(get_api_key)
 ) -> dict:
     """GET /llm: Paginated list of LLM completions."""
     try:
@@ -20,7 +22,7 @@ def get_llm_records(
         count_row = cur.fetchone()
         total = count_row[0] if count_row and count_row[0] is not None else 0
         cur.execute("""
-            SELECT id, prompt, completion, duration, time, data, model
+            SELECT id, prompt, completion, duration, time, data, model, prospect_id
             FROM llm
             ORDER BY id DESC
             LIMIT %s OFFSET %s;
@@ -34,6 +36,7 @@ def get_llm_records(
                 "time": row[4].isoformat() if row[4] else None,
                 "data": row[5],
                 "model": row[6],
+                "prospect_id": row[7],
             }
             for row in cur.fetchall()
         ]
@@ -58,6 +61,7 @@ def get_llm_records(
 def llm_post(payload: dict) -> dict:
     """POST /llm: send prompt to Gemini, returns completion google-genai SDK."""
     prompt = payload.get("prompt")
+    prospect_id = payload.get("prospect_id")
     if not prompt:
         raise HTTPException(status_code=400, detail="Missing 'prompt' in request body.")
     api_key = os.getenv("GEMINI_API_KEY")
@@ -105,11 +109,11 @@ def llm_post(payload: dict) -> dict:
             cur = conn.cursor()
             cur.execute(
                 """
-                INSERT INTO llm (prompt, completion, duration, data, model)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO llm (prompt, completion, duration, data, model, prospect_id)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 RETURNING id;
                 """,
-                (prompt, completion, duration, data_blob, used_model)
+                (prompt, completion, duration, data_blob, used_model, prospect_id)
             )
             record_id_row = cur.fetchone()
             record_id = record_id_row[0] if record_id_row else None
