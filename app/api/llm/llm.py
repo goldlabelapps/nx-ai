@@ -21,7 +21,7 @@ def get_llm_records(
         if prospect_id is not None:
             # No pagination for single prospect_id lookup
             select_query = """
-                SELECT id, prompt, completion, duration, time, data, model, prospect_id
+                SELECT id, prompt, completion, duration, time, data, model, prospect_id, search_vector
                 FROM llm
                 WHERE prospect_id = %s
                 ORDER BY id DESC
@@ -38,6 +38,7 @@ def get_llm_records(
                     "data": row[5],
                     "model": row[6],
                     "prospect_id": row[7],
+                    "search_vector": str(row[8]) if row[8] is not None else None,
                 }
                 for row in rows
             ]
@@ -61,7 +62,7 @@ def get_llm_records(
             count_row = cur.fetchone()
             total = count_row[0] if count_row and count_row[0] is not None else 0
             cur.execute("""
-                SELECT id, prompt, completion, duration, time, data, model, prospect_id
+                SELECT id, prompt, completion, duration, time, data, model, prospect_id, search_vector
                 FROM llm
                 ORDER BY id DESC
                 LIMIT %s OFFSET %s;
@@ -76,6 +77,7 @@ def get_llm_records(
                     "data": row[5],
                     "model": row[6],
                     "prospect_id": row[7],
+                    "search_vector": str(row[8]) if row[8] is not None else None,
                 }
                 for row in cur.fetchall()
             ]
@@ -146,13 +148,14 @@ def llm_post(payload: dict) -> dict:
             data_blob = json.dumps({"version": __version__})
             conn = get_db_connection_direct()
             cur = conn.cursor()
+            # Generate tsvector from prompt and completion
             cur.execute(
                 """
-                INSERT INTO llm (prompt, completion, duration, data, model, prospect_id)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO llm (prompt, completion, duration, data, model, prospect_id, search_vector)
+                VALUES (%s, %s, %s, %s, %s, %s, to_tsvector('english', %s || ' ' || %s))
                 RETURNING id;
                 """,
-                (prompt, completion, duration, data_blob, used_model, prospect_id)
+                (prompt, completion, duration, data_blob, used_model, prospect_id, prompt, completion)
             )
             record_id_row = cur.fetchone()
             record_id = record_id_row[0] if record_id_row else None
