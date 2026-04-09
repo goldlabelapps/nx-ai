@@ -103,16 +103,15 @@ def prospects_read_one(id: int = Path(..., description="ID of the prospect to re
                     from app.utils.db import get_db_connection_direct
                     llm_conn = get_db_connection_direct()
                     llm_cur = llm_conn.cursor()
-                    llm_cur.execute("SELECT id, prompt, completion, duration, time, data, model FROM llm WHERE prospect_id = %s ORDER BY id DESC;", (id,))
+                    llm_cur.execute("SELECT id, duration, time, data, model, search_vector FROM llm WHERE prospect_id = %s ORDER BY id DESC;", (id,))
                     llm_records = [
                         {
                             "id": r[0],
-                            "prompt": r[1],
-                            "completion": r[2],
-                            "duration": r[3],
-                            "time": r[4].isoformat() if r[4] else None,
-                            "data": r[5],
-                            "model": r[6],
+                            "duration": r[1],
+                            "time": r[2].isoformat() if r[2] else None,
+                            "data": r[3],
+                            "model": r[4],
+                            "search_vector": str(r[5]) if r[5] is not None else None,
                         }
                         for r in llm_cur.fetchall()
                     ]
