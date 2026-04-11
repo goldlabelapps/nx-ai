@@ -20,16 +20,25 @@ def root() -> dict:
         "time": epoch,
     }
     endpoints = [
+        {"name": "health", "url": f"{base_url}/health"},
+        {
+            "name": "orders", 
+            "endpoints": [
+                {"name": "list", "url": f"{base_url}/orders"},
+            ]
+        },
         {
             "name": "prospects", 
             "endpoints": [
                 {"name": "list", "url": f"{base_url}/prospects"},
-                {"name": "flagged", "url": f"{base_url}/prospects/flagged"},
+            ]
+        },
+        {
+            "name": "llm", 
+            "endpoints": [
+                {"name": "list", "url": f"{base_url}/llm"},
             ]
         },
         {"name": "docs", "url": f"{base_url}/docs"},
-        {"name": "resend", "url": f"{base_url}/resend"},
-        {"name": "health", "url": f"{base_url}/health"},
-        {"name": "llm", "url": f"{base_url}/llm"},
     ]
     return {"meta": meta, "data": endpoints}

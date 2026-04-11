@@ -1,4 +1,5 @@
-"""API routes"""
+"""Register API routes"""
+
 from app import __version__
 from fastapi import APIRouter
 
@@ -9,6 +10,7 @@ from app.api.health import router as health_router
 from app.api.resend.resend import router as resend_router
 from app.api.llm.llm import router as llm_router
 from app.api.prospects.prospects import router as prospects_router
+from app.api.orders.orders import router as orders_router
 from app.api.prospects.flag import router as flag_router
 from app.api.llm.llm import router as gemini_router
 
@@ -18,4 +20,5 @@ router.include_router(health_router)
 router.include_router(llm_router)
 router.include_router(flag_router)
 router.include_router(prospects_router)
+router.include_router(orders_router)
 router.include_router(gemini_router)
