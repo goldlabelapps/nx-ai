@@ -6,15 +6,15 @@ from app.utils.api_key_auth import get_api_key
 
 router = APIRouter()
 
-@router.get("/llm")
-def get_llm_records(
+@router.get("/prompt")
+def get_prompt_records(
     request: Request,
     page: int = Query(1, ge=1, description="Page number (1-based)"),
     page_size: int = Query(10, ge=1, le=100, description="Records per page"),
     prospect_id: int = Query(None, description="Filter by prospect_id"),
     api_key: str = Depends(get_api_key)
 ) -> dict:
-    """GET /llm: Paginated list of LLM completions."""
+    """GET /prompt: Paginated list of prompt completions."""
     try:
         conn = get_db_connection_direct()
         cur = conn.cursor()
@@ -98,9 +98,9 @@ def get_llm_records(
         meta = make_meta("error", f"DB error: {str(e)}")
         return {"meta": meta, "data": {}}
 
-@router.post("/llm")
+@router.post("/prompt")
 def llm_post(payload: dict) -> dict:
-    """POST /llm: send prompt to Gemini, returns completion google-genai SDK."""
+    """POST /prompt: send prompt to Gemini, returns completion google-genai SDK."""
     prompt = payload.get("prompt")
     prospect_id = payload.get("prospect_id")
     if not prompt:

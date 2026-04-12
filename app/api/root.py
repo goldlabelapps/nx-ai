@@ -22,23 +22,23 @@ def root() -> dict:
     endpoints = [
         {"name": "health", "url": f"{base_url}/health"},
         {
-            "name": "orders", 
+            "name": "Orders°", 
             "endpoints": [
                 {"name": "list", "url": f"{base_url}/orders"},
             ]
         },
         {
-            "name": "prospects", 
+            "name": "Prospects°", 
             "endpoints": [
                 {"name": "list", "url": f"{base_url}/prospects"},
             ]
         },
         {
-            "name": "llm", 
+            "name": "Prompt°", 
             "endpoints": [
-                {"name": "list", "url": f"{base_url}/llm"},
+                {"name": "list", "url": f"{base_url}/prompt"},
             ]
         },
-        {"name": "docs", "url": f"{base_url}/docs"},
+        {"name": "Docs", "url": f"{base_url}/docs"},
     ]
     return {"meta": meta, "data": endpoints}
