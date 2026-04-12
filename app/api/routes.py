@@ -6,8 +6,8 @@ from fastapi import APIRouter
 router = APIRouter()
 
 from app.api.root import router as root_router
-from app.api.health import router as health_router
-from app.api.resend.resend import router as resend_router
+from app.utils.health import router as health_router
+from app.utils.notify.resend import router as resend_router
 from app.api.prompt.prompt import router as prompt_router
 from app.api.prospects.prospects import router as prospects_router
 from app.api.orders.orders import router as orders_router

@@ -29,7 +29,7 @@ client = TestClient(app)
 
 def test_llm_get_endpoint():
     api_key = os.getenv("PYTHON_KEY", "test")
-    response = client.get("/llm", headers={"X-API-Key": api_key})
+    response = client.get("/prompt", headers={"X-API-Key": api_key})
     assert response.status_code == 200
     data = response.json()
     assert "meta" in data
@@ -57,7 +57,7 @@ def test_llm_post_endpoint(monkeypatch):
 
     api_key = os.getenv("PYTHON_KEY", "test")
     payload = {"prompt": "Test prompt"}
-    response = client.post("/llm", json=payload, headers={"X-API-Key": api_key})
+    response = client.post("/prompt", json=payload, headers={"X-API-Key": api_key})
     assert response.status_code == 200
     data = response.json()
     assert "meta" in data
