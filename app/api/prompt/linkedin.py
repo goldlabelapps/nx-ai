@@ -36,7 +36,7 @@ def linkedin_prompt_success(payload: dict, api_key: str = Depends(get_api_key)) 
         if has_search_vector:
             cur.execute(
                 """
-                SELECT id, completion, time, model, data
+                SELECT id, prompt, completion, time, model, data
                 FROM prompt
                 WHERE (
                     COALESCE(data->>'linkedin_url', data->>'linkedinUrl') = %s
@@ -51,7 +51,7 @@ def linkedin_prompt_success(payload: dict, api_key: str = Depends(get_api_key)) 
         else:
             cur.execute(
                 """
-                SELECT id, completion, time, model, data
+                SELECT id, prompt, completion, time, model, data
                 FROM prompt
                 WHERE (COALESCE(data->>'linkedin_url', data->>'linkedinUrl') = %s OR prompt ILIKE %s)
                 ORDER BY id DESC
@@ -68,10 +68,11 @@ def linkedin_prompt_success(payload: dict, api_key: str = Depends(get_api_key)) 
                     "cached": True,
                     "id": row[0],
                     "linkedin_url": linkedin_url,
-                    "completion": row[1],
-                    "time": row[2].isoformat() if row[2] else None,
-                    "model": row[3],
-                    "record_data": row[4],
+                    "prompt": row[1],
+                    "completion": row[2],
+                    "time": row[3].isoformat() if row[3] else None,
+                    "model": row[4],
+                    "record_data": row[5],
                 },
             }
 
@@ -80,6 +81,7 @@ def linkedin_prompt_success(payload: dict, api_key: str = Depends(get_api_key)) 
             "data": {
                 "cached": False,
                 "linkedin_url": linkedin_url,
+                "prompt": None,
                 "completion": None,
             },
         }
