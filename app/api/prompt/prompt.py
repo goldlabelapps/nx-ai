@@ -21,8 +21,8 @@ def get_prompt_records(
         if prospect_id is not None:
             # No pagination for single prospect_id lookup
             select_query = """
-                SELECT id, prompt, completion, duration, time, data, model, prospect_id, search_vector
-                FROM llm
+                SELECT id, prompt, completion, duration, time, data, model, prospect_id
+                FROM prompt
                 WHERE prospect_id = %s
                 ORDER BY id DESC
             """
@@ -38,7 +38,6 @@ def get_prompt_records(
                     "data": row[5],
                     "model": row[6],
                     "prospect_id": row[7],
-                    "search_vector": str(row[8]) if row[8] is not None else None,
                 }
                 for row in rows
             ]
@@ -58,12 +57,12 @@ def get_prompt_records(
                 }
         else:
             offset = (page - 1) * page_size
-            cur.execute("SELECT COUNT(*) FROM llm;")
+            cur.execute("SELECT COUNT(*) FROM prompt;")
             count_row = cur.fetchone()
             total = count_row[0] if count_row and count_row[0] is not None else 0
             cur.execute("""
-                SELECT id, prompt, completion, duration, time, data, model, prospect_id, search_vector
-                FROM llm
+                SELECT id, prompt, completion, duration, time, data, model, prospect_id
+                FROM prompt
                 ORDER BY id DESC
                 LIMIT %s OFFSET %s;
             """, (page_size, offset))
@@ -77,13 +76,12 @@ def get_prompt_records(
                     "data": row[5],
                     "model": row[6],
                     "prospect_id": row[7],
-                    "search_vector": str(row[8]) if row[8] is not None else None,
                 }
                 for row in cur.fetchall()
             ]
             cur.close()
             conn.close()
-            meta = make_meta("success", f"LLM {len(records)} records (page {page})")
+            meta = make_meta("success", f"Prompt {len(records)} records (page {page})")
             return {
                 "meta": meta,
                 "data": {
@@ -140,7 +138,7 @@ def llm_post(payload: dict) -> dict:
         if not completion:
             error_details = " | ".join([f"{k}: {v}" for k, v in errors.items()])
             raise Exception(f"No available Gemini model succeeded for generate_content with your API key. Details: {error_details}")
-        # Insert record into llm table
+        # Insert record into prompt table
         record_id = None
         try:
             import json
@@ -148,14 +146,13 @@ def llm_post(payload: dict) -> dict:
             data_blob = json.dumps({"version": __version__})
             conn = get_db_connection_direct()
             cur = conn.cursor()
-            # Generate tsvector from prompt and completion
             cur.execute(
                 """
-                INSERT INTO llm (prompt, completion, duration, data, model, prospect_id, search_vector)
-                VALUES (%s, %s, %s, %s, %s, %s, to_tsvector('english', %s || ' ' || %s))
+                INSERT INTO prompt (prompt, completion, duration, data, model, prospect_id)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 RETURNING id;
                 """,
-                (prompt, completion, duration, data_blob, used_model, prospect_id, prompt, completion)
+                (prompt, completion, duration, data_blob, used_model, prospect_id)
             )
             record_id_row = cur.fetchone()
             record_id = record_id_row[0] if record_id_row else None
@@ -164,7 +161,7 @@ def llm_post(payload: dict) -> dict:
             conn.close()
         except Exception as db_exc:
             # Log DB error but do not fail the API response
-            logging.error(f"Failed to insert llm record: {db_exc}")
+            logging.error(f"Failed to insert prompt record: {db_exc}")
         meta = make_meta("success", f"Gemini completion received from {used_model}")
         return {"meta": meta, "data": {"id": record_id, "prompt": prompt, "completion": completion}}
     except Exception as e:
