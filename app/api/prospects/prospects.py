@@ -98,28 +98,27 @@ def prospects_read_one(id: int = Path(..., description="ID of the prospect to re
             if row is not None:
                 columns = [desc[0] for desc in cur.description]
                 data = dict(zip(columns, row))
-                # Fetch related llm records
+                # Fetch related prompt records
                 try:
                     from app.utils.db import get_db_connection_direct
-                    llm_conn = get_db_connection_direct()
-                    llm_cur = llm_conn.cursor()
-                    llm_cur.execute("SELECT id, duration, time, data, model, search_vector FROM llm WHERE prospect_id = %s ORDER BY id DESC;", (id,))
-                    llm_records = [
+                    prompt_conn = get_db_connection_direct()
+                    prompt_cur = prompt_conn.cursor()
+                    prompt_cur.execute("SELECT id, duration, time, data, model FROM prompt WHERE prospect_id = %s ORDER BY id DESC;", (id,))
+                    prompt_records = [
                         {
                             "id": r[0],
                             "duration": r[1],
                             "time": r[2].isoformat() if r[2] else None,
                             "data": r[3],
                             "model": r[4],
-                            "search_vector": str(r[5]) if r[5] is not None else None,
                         }
-                        for r in llm_cur.fetchall()
+                        for r in prompt_cur.fetchall()
                     ]
-                    llm_cur.close()
-                    llm_conn.close()
-                    data["llm_records"] = llm_records
-                except Exception as llm_exc:
-                    data["llm_records"] = []
+                    prompt_cur.close()
+                    prompt_conn.close()
+                    data["prompt_records"] = prompt_records
+                except Exception as prompt_exc:
+                    data["prompt_records"] = []
             else:
                 data = None
                 meta = make_meta("error", f"No prospect found with id {id}")
