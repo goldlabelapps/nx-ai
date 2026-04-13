@@ -17,6 +17,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:1999", 
+        "http://localhost:2027",
         "https://goldlabel.pro",
         "https://free.goldlabel.pro",
     ],
