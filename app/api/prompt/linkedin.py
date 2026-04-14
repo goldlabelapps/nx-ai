@@ -84,13 +84,12 @@ def linkedin_prompt_success(payload: dict, api_key: str = Depends(get_api_key)) 
                 "meta": make_meta("success", "LinkedIn URL already analysed"),
                 "data": {
                     "cached": True,
-                    "id": row[0],
+                    "prompt_id": row[0],
                     "linkedin_url": linkedin_url,
                     "prompt": row[1],
                     "completion": row[2],
                     "time": row[3].isoformat() if row[3] else None,
                     "model": row[4],
-                    "record_data": row[5],
                 },
             }
 
