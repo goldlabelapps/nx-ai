@@ -1,15 +1,8 @@
-import os
-from fastapi import APIRouter, HTTPException, Query, Request, Depends
-from app.utils.make_meta import make_meta
-from app.utils.db import get_db_connection_direct
-from app.utils.api_key_auth import get_api_key
-
-router = APIRouter()
 
 
-@router.get("/queue")
-def read_queue() -> dict:
-    """GET /queue: """
-    return {"meta": make_meta("success", "Hello from queue"), "data": {"do": "it"}}
+from .routes.drop import router as drop_router
+from .routes.empty import router as empty_router
+from .routes.get import router as get_router
+from .routes.create import router as create_router
 
     
