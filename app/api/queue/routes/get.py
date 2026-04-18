@@ -38,9 +38,9 @@ def read_queue() -> dict:
         return {
             "meta": make_meta("success", "Queue table info"),
             "data": {
-                "queued": record_count,
-                "most_recent": most_recent,
-                "schema": schema
+                    "queued": record_count,
+                    "most_recent": most_recent,
+                    # "schema": schema
             }
         }
     except Exception as e:
