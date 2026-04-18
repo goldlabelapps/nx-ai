@@ -9,7 +9,7 @@ from .routes.get import router as get_router
 from .routes.create import router as create_router
 from .routes.delete import router as delete_router
 
-from .import_ import linkedin as linkedin_import_router
+from .csv import linkedin as linkedin_import_router
 from .routes.alter import router as alter_router
 from .routes.rename_column import router as rename_router
 
@@ -20,5 +20,9 @@ router.include_router(get_router)
 router.include_router(create_router)
 router.include_router(delete_router)
 router.include_router(linkedin_import_router.router)
+
+# Register Apollo CSV import route
+from .csv import apollo as apollo_import_router
+router.include_router(apollo_import_router.router)
 router.include_router(alter_router)
 router.include_router(rename_router)

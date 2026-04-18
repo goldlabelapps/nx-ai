@@ -7,9 +7,9 @@ from app.utils.db import get_db_connection_direct
 
 router = APIRouter()
 
-@router.post("/queue/import/apollo")
+@router.post("/queue/csv/apollo")
 def import_apollo_csv() -> dict:
-    """POST /queue/import/apollo: Import data from apollo.csv into the queue table (template)."""
+    """POST /queue/csv/apollo: Import data from apollo.csv into the queue table (template)."""
     csv_path = os.path.join(os.path.dirname(__file__), "../csv/apollo/seed.csv")
     if not os.path.exists(csv_path):
         raise HTTPException(status_code=404, detail="seed.csv not found")
