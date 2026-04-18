@@ -9,8 +9,7 @@ from .routes.get import router as get_router
 from .routes.create import router as create_router
 from .routes.delete import router as delete_router
 
-from .routes.import_linkedin import router as import_linkedin_router
-
+from .import_ import linkedin as linkedin_import_router
 from .routes.alter import router as alter_router
 from .routes.rename_column import router as rename_router
 
@@ -20,6 +19,6 @@ router.include_router(empty_router)
 router.include_router(get_router)
 router.include_router(create_router)
 router.include_router(delete_router)
-router.include_router(import_linkedin_router)
+router.include_router(linkedin_import_router.router)
 router.include_router(alter_router)
 router.include_router(rename_router)
