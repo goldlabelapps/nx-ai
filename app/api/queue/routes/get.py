@@ -27,11 +27,11 @@ def read_queue() -> dict:
             for row in cursor.fetchall()
         ]
 
-        # 3. Get the 10 most recently updated records
-        cursor.execute("SELECT * FROM queue ORDER BY updated DESC LIMIT 10;")
+        # 3. Get a random record
+        cursor.execute("SELECT * FROM queue ORDER BY RANDOM() LIMIT 1;")
         columns = [desc[0] for desc in cursor.description] if cursor.description else []
         rows = cursor.fetchall()
-        most_recent = [dict(zip(columns, row)) for row in rows] if rows and columns else []
+        random_record = [dict(zip(columns, row)) for row in rows] if rows and columns else []
 
         # 4. Get unique values from collection and group columns
         cursor.execute("SELECT DISTINCT collection FROM queue WHERE collection IS NOT NULL;")
@@ -47,7 +47,7 @@ def read_queue() -> dict:
                 "in_queue": record_count,
                 "collections": collections,
                 "groups": groups,
-                "example": most_recent[:1],
+                "example": random_record,
                 # "queue_schema": schema
             }
         }
