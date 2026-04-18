@@ -9,7 +9,9 @@ from .routes.get import router as get_router
 from .routes.create import router as create_router
 
 from .routes.import_linkedin import router as import_linkedin_router
+
 from .routes.alter import router as alter_router
+from .routes.rename_column import router as rename_router
 
 router = APIRouter()
 router.include_router(drop_router)
@@ -18,3 +20,4 @@ router.include_router(get_router)
 router.include_router(create_router)
 router.include_router(import_linkedin_router)
 router.include_router(alter_router)
+router.include_router(rename_router)

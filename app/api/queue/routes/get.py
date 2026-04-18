@@ -27,20 +27,20 @@ def read_queue() -> dict:
             for row in cursor.fetchall()
         ]
 
-        # 3. Get most recently updated record
-        cursor.execute("SELECT * FROM queue ORDER BY updated DESC LIMIT 1;")
+        # 3. Get the 10 most recently updated records
+        cursor.execute("SELECT * FROM queue ORDER BY updated DESC LIMIT 10;")
         columns = [desc[0] for desc in cursor.description] if cursor.description else []
-        row = cursor.fetchone()
-        most_recent = dict(zip(columns, row)) if row and columns else None
+        rows = cursor.fetchall()
+        most_recent = [dict(zip(columns, row)) for row in rows] if rows and columns else []
 
         conn.close()
 
         return {
             "meta": make_meta("success", "Queue table info"),
             "data": {
-                    "queued": record_count,
-                    "most_recent": most_recent,
-                    # "schema": schema
+                "queued": record_count,
+                "most_recent": most_recent,
+                # "schema": schema
             }
         }
     except Exception as e:
