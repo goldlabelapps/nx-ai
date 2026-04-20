@@ -53,13 +53,14 @@ def read_queue(
         conn.close()
 
         return {
-            "meta": make_meta("success", "Next in queue"),
+            "meta": make_meta("success", "Queue table info"),
             "data": {
+                "in_queue": total_count,
                 "total": total_count,
                 "filtered": filtered_count,
                 "collections": collections,
                 "groups": groups,
-                "next": next_record
+                "next": next_record,
             }
         }
     except Exception as e:
