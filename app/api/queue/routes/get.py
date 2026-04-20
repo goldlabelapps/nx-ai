@@ -55,7 +55,6 @@ def read_queue(
         return {
             "meta": make_meta("success", "Queue table info"),
             "data": {
-                "in_queue": total_count,
                 "total": total_count,
                 "filtered": filtered_count,
                 "collections": collections,
