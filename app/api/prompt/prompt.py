@@ -1,4 +1,5 @@
 import os
+import hashlib
 from fastapi import APIRouter, HTTPException, Depends
 from app.utils.make_meta import make_meta
 from app.utils.db import get_db_connection_direct
@@ -41,15 +42,84 @@ def get_prompt_table_metadata(api_key: str = Depends(get_api_key)) -> dict:
 
 @router.post("/prompt")
 def llm_post(payload: dict) -> dict:
-    """POST /prompt: send prompt to Gemini, returns completion google-genai SDK."""
-    prompt = payload.get("prompt")
+    """POST /prompt: send prompt to Gemini with DB-backed caching."""
+    prompt = (payload.get("prompt") or "").strip()
     if not prompt:
         raise HTTPException(status_code=400, detail="Missing 'prompt' in request body.")
+
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         raise HTTPException(status_code=500, detail="Gemini API key not configured.")
+
+    prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+    conn = None
+    cur = None
     import logging
     try:
+        conn = get_db_connection_direct()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = 'prompt'
+                  AND column_name = 'search_vector'
+            );
+            """
+        )
+        exists_row = cur.fetchone()
+        has_search_vector = bool(exists_row and exists_row[0])
+
+        # Fast/safe cache hit: exact prompt hash or exact prompt text.
+        cur.execute(
+            """
+            SELECT id, prompt, completion, time, model
+            FROM prompt
+            WHERE COALESCE(data->>'prompt_hash', '') = %s OR prompt = %s
+            ORDER BY id DESC
+            LIMIT 1;
+            """,
+            (prompt_hash, prompt),
+        )
+        row = cur.fetchone()
+
+        # Fallback cache hit when tsvector exists and query terms match strongly.
+        if not row and has_search_vector:
+            cur.execute(
+                """
+                SELECT id, prompt, completion, time, model,
+                       ts_rank_cd(search_vector, plainto_tsquery('english', %s)) AS rank
+                FROM prompt
+                WHERE search_vector @@ plainto_tsquery('english', %s)
+                ORDER BY rank DESC, id DESC
+                LIMIT 1;
+                """,
+                (prompt, prompt),
+            )
+            rank_row = cur.fetchone()
+            if rank_row and rank_row[5] is not None and float(rank_row[5]) >= 0.35:
+                row = rank_row[:5]
+
+        cur.close()
+        conn.close()
+        cur = None
+        conn = None
+
+        if row:
+            return {
+                "meta": make_meta("success", "Prompt returned from cache"),
+                "data": {
+                    "cached": True,
+                    "prompt_id": row[0],
+                    "prompt": row[1],
+                    "completion": row[2],
+                    "time": row[3].isoformat() if row[3] else None,
+                    "model": row[4],
+                },
+            }
+
         from google import genai
         import time as time_mod
         client = genai.Client(api_key=api_key)
@@ -85,17 +155,31 @@ def llm_post(payload: dict) -> dict:
         try:
             import json
             from app import __version__
-            data_blob = json.dumps({"version": __version__})
+            record_data = {
+                "version": __version__,
+                "prompt_hash": prompt_hash,
+            }
+            data_blob = json.dumps(record_data)
             conn = get_db_connection_direct()
             cur = conn.cursor()
-            cur.execute(
-                """
-                INSERT INTO prompt (prompt, completion, duration, data, model)
-                VALUES (%s, %s, %s, %s, %s)
-                RETURNING id;
-                """,
-                (prompt, completion, duration, data_blob, used_model)
-            )
+            if has_search_vector:
+                cur.execute(
+                    """
+                    INSERT INTO prompt (prompt, completion, duration, data, model, search_vector)
+                    VALUES (%s, %s, %s, %s, %s, to_tsvector('english', %s || ' ' || %s))
+                    RETURNING id;
+                    """,
+                    (prompt, completion, duration, data_blob, used_model, prompt, completion)
+                )
+            else:
+                cur.execute(
+                    """
+                    INSERT INTO prompt (prompt, completion, duration, data, model)
+                    VALUES (%s, %s, %s, %s, %s)
+                    RETURNING id;
+                    """,
+                    (prompt, completion, duration, data_blob, used_model)
+                )
             record_id_row = cur.fetchone()
             record_id = record_id_row[0] if record_id_row else None
             conn.commit()
@@ -105,8 +189,23 @@ def llm_post(payload: dict) -> dict:
             # Log DB error but do not fail the API response
             logging.error(f"Failed to insert prompt record: {db_exc}")
         meta = make_meta("success", f"Gemini completion received from {used_model}")
-        return {"meta": meta, "data": {"id": record_id, "prompt": prompt, "completion": completion}}
+        return {
+            "meta": meta,
+            "data": {
+                "cached": False,
+                "id": record_id,
+                "prompt": prompt,
+                "completion": completion,
+                "duration": duration,
+                "model": used_model,
+            },
+        }
     except Exception as e:
         meta = make_meta("error", f"Gemini API error: {str(e)}")
         return {"meta": meta, "data": {}}
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
     
