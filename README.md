@@ -1,6 +1,6 @@
 ## Python°
 
-![Python Logo](app/static/python.png)
+![Python°](app/static/python.png)
 
 > Production-ready, open-source FastAPI application with PostgreSQL and blazing-fast full-text search.
 
@@ -23,7 +23,7 @@ This project provides a scalable API backend using FastAPI and PostgreSQL, featu
 
 #### Install & Use
 
-### 1. Clone & Setup Environment
+#### 1. Clone & Setup Environment
 
 ```bash
 git clone https://github.com/goldlabelapps/python.git
@@ -59,7 +59,7 @@ FastAPI auto-generates interactive docs:
 - `GET /prospects` — Paginated prospects
 - `POST /prospects/process` — Bulk CSV ingestion
 
-## Full-Text Search (tsvector)
+#### Full-Text Search (tsvector)
 
 The `prospects` table includes a `search_vector` column (type: tsvector) computed from all text fields on insert/update. A GIN index enables fast, scalable full-text search:
 
@@ -72,15 +72,14 @@ SELECT * FROM prospects WHERE search_vector @@ plainto_tsquery('english', 'searc
 - The GIN index (`idx_prospects_search_vector`) enables efficient search across large datasets.
 
 
-## Processing Large CSV Files
+#### Processing Large CSV Files
 
 The `/prospects/process` endpoint supports robust ingestion of large CSVs (e.g., 1300+ rows, 300KB+), following the same normalization and insertion pattern as `/prospects/seed` but optimized for scale.
 
-## Contributing
+#### Contributing
 
 Contributions welcome. Please open issues or submit pull requests.
 
-
-## License
+#### License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
