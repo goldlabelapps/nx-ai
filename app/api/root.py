@@ -31,7 +31,6 @@ def root() -> dict:
             "name": "Prompt°", 
             "endpoints": [
                 {"name": "list", "url": f"{base_url}/prompt"},
-                {"name": "linkedin", "url": f"{base_url}/prompt/linkedin"},
             ]
         },
         {

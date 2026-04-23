@@ -12,12 +12,14 @@ def test_get_queue():
     assert "meta" in data
     assert "data" in data
     queue_data = data["data"]
-    assert "in_queue" in queue_data
-    assert "collections" in queue_data
-    assert "groups" in queue_data
+    assert "filters" in queue_data
     assert "filtered" in queue_data
     assert "total" in queue_data
     assert "next" in queue_data
+    assert "collections" in queue_data["filters"]
+    assert "groups" in queue_data["filters"]
+    assert "collectionFilter" in queue_data["filters"]
+    assert "groupFilter" in queue_data["filters"]
     meta = data["meta"]
     assert meta["severity"] == "success"
     assert meta["title"] == "Queue table info"
