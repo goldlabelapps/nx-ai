@@ -10,7 +10,7 @@ router = APIRouter()
 @router.post("/queue/csv/linkedin")
 def import_linkedin_csv() -> dict:
     """POST /queue/csv/linkedin: Import data from linkedin.csv into the queue table, robust for large files."""
-    csv_path = os.path.join(os.path.dirname(__file__), "../csv/linkedin/linkedin_sample.csv")
+    csv_path = os.path.join(os.path.dirname(__file__), "../csv/linkedin/linkedin.csv")
     if not os.path.exists(csv_path):
         raise HTTPException(status_code=404, detail="linkedin.csv not found")
     try:
