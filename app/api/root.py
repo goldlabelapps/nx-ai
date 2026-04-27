@@ -11,12 +11,10 @@ def root() -> dict:
     """"Python°"""
     load_dotenv()
     base_url = os.getenv("BASE_URL", "http://localhost:8000")
-    epoch = int(time.time() * 1000)
     meta = {
         "title": "Python°",
         "version": __version__,
-        "base_url": base_url,
-        "time": epoch,
+        "base": base_url,
     }
     
     return {"meta": meta}
