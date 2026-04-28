@@ -36,38 +36,6 @@
           "name": "prompts",
           "item": [
             {
-              "name": "8K/prompt/linkedin",
-              "request": {
-                "auth": {
-                  "type": "noauth"
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"linkedin_url\": \"https://www.linkedin.com/in/chris-dorward/\",\n    \"prompt\": \"You are a senior sales intelligence analyst with 20 years of experience in sales and marketing.\\n\\nYour task is to analyze a LinkedIn profile based on the linkedin_url. These URLs are my real connections. For each profile, infer actionable commercial insights about who the person is (including their full name), what they do, who they work for, and whether they are a strong prospect for NX° — a Next.js multi-tenant app developed by Goldlabel Apps for e-commerce and SaaS businesses.\\n\\nPay special attention to their current company:\\n- Identify the company they work for\\n- Find out if the company has a website (include the URL if possible)\\n\\n=== PERSON ===\\nLinkedIn: https://www.linkedin.com/in/chris-dorward/\\n\\n=== INSTRUCTIONS ===\\n\\nInstructions:\\n1. Research the LinkedIn profile and provided details. Focus on their current and past experience, role, department, and any e-commerce, SaaS, or software development-related activities.\\n\\n- Infer responsibilities based on title and seniority\\n- Estimate decision-making power (low / medium / high)\\n- Identify likely business priorities\\n- Identify pain points related to e-commerce, SaaS, or multi-tenant platforms\\n- Assess how relevant they are as a prospect for NX°\\n- Be pragmatic and commercially focused\\n\\n- If data is missing, make reasonable assumptions\\n- Do NOT mention missing data\\n- Do NOT be vague\\n\\n=== SCORING ===\\nAssign a percentage score (0-100) indicating the likelihood that this person or their company would be interested in NX°. Base this on their role, company type, experience with e-commerce, SaaS, or multi-tenant apps, and any signals of technical or business alignment with Next.js or similar platforms.\\n\\nBriefly justify the score in the recommendation.\\n\\n=== OUTPUT ===\\nReturn ONLY valid JSON in this format:\\n\\n{\\n    \\\"name\\\": string,\\n    \\\"summary\\\": string,\\n    \\\"jobTitle\\\": string,\\n    \\\"company\\\": string,\\n    \\\"companyWebsite\\\": string,\\n    \\\"avatarUrl\\\"?: string,\\n    \\\"email\\\"?: string,\\n    \\\"hasJavaScript\\\": boolean,\\n    \\\"category\\\": \\\"Developer\\\" | \\\"Recruiter\\\" | \\\"Business\\\" | \\\"Other\\\",\\n    \\\"tags\\\": array,\\n    \\\"score\\\": number,\\n    \\\"recommendation\\\": string\\n}\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "http://localhost:8000/prompt/linkedin",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8000",
-                  "path": [
-                    "prompt",
-                    "linkedin"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
               "name": "8K/prompt",
               "protocolProfileBehavior": {
                 "disableBodyPruning": true
@@ -102,15 +70,43 @@
               "response": []
             },
             {
-              "name": "8K/prompt/dump",
-              "protocolProfileBehavior": {
-                "disableBodyPruning": true
-              },
+              "name": "8K/prompt",
               "request": {
                 "auth": {
                   "type": "noauth"
                 },
-                "method": "GET",
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"prompt\": \"This is a test prompt from Postman. Tell me why Postman is good for developing APIs\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8000/prompt",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "prompt"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete ID",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "DELETE",
                 "header": [],
                 "body": {
                   "mode": "raw",
@@ -122,7 +118,7 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8000/prompt/dump",
+                  "raw": "http://localhost:8000/prompt/delete_id?id=321",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -130,7 +126,45 @@
                   "port": "8000",
                   "path": [
                     "prompt",
-                    "dump"
+                    "delete_id"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "321"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "8K/prompt/empty",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8000/prompt/empty",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "prompt",
+                    "empty"
                   ]
                 }
               },
@@ -397,7 +431,7 @@
                     "header": [],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\"column_name\": \"group\", \"column_type\": \"TEXT\"}",
+                      "raw": "{\"column_name\": \"seniority\", \"column_type\": \"TEXT\"}",
                       "options": {
                         "raw": {
                           "language": "json"
@@ -405,7 +439,7 @@
                       }
                     },
                     "url": {
-                      "raw": "http://localhost:8000/queue/empty",
+                      "raw": "http://localhost:8000/queue/alter/add-column",
                       "protocol": "http",
                       "host": [
                         "localhost"
@@ -413,7 +447,8 @@
                       "port": "8000",
                       "path": [
                         "queue",
-                        "empty"
+                        "alter",
+                        "add-column"
                       ]
                     }
                   },
@@ -521,11 +556,30 @@
                     }
                   },
                   "response": []
+                },
+                {
+                  "name": "queue",
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8000/queue",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8000",
+                      "path": [
+                        "queue"
+                      ]
+                    }
+                  },
+                  "response": []
                 }
               ]
             },
             {
-              "name": "import",
+              "name": "csv",
               "item": [
                 {
                   "name": "/queue/csv/linkedin",
@@ -545,7 +599,7 @@
                       }
                     },
                     "url": {
-                      "raw": "http://localhost:8000/queue/import/linkedin",
+                      "raw": "http://localhost:8000/queue/csv/linkedin",
                       "protocol": "http",
                       "host": [
                         "localhost"
@@ -553,8 +607,41 @@
                       "port": "8000",
                       "path": [
                         "queue",
-                        "import",
+                        "csv",
                         "linkedin"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "/queue/csv/apollo",
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8000/queue/csv/apollo",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8000",
+                      "path": [
+                        "queue",
+                        "csv",
+                        "apollo"
                       ]
                     }
                   },
@@ -579,6 +666,97 @@
                   "port": "8000",
                   "path": [
                     "queue"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "GitHub",
+          "item": [
+            {
+              "name": "Postgres",
+              "item": [
+                {
+                  "name": "Empty Tables",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8000/api/github/empty",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8000",
+                      "path": [
+                        "api",
+                        "github",
+                        "empty"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Create Tables",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8000/github/createtable",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8000",
+                      "path": [
+                        "github",
+                        "createtable"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "Get",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8000/github",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "github"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Sync",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8000/api/github/sync",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "api",
+                    "github",
+                    "sync"
                   ]
                 }
               },

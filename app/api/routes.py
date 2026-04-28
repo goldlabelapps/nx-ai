@@ -7,7 +7,7 @@ router = APIRouter()
 
 from app.api.root import router as root_router
 from app.utils.health import router as health_router
-from app.utils.notify.resend import router as resend_router
+from app.api.notify.resend import router as resend_router
 from app.api.prompt.prompt import router as prompt_router
 from app.api.prompt.empty import router as prompts_empty_router
 from app.api.prompt.delete_id import router as prompt_delete_id_router
