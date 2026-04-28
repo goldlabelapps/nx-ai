@@ -5,6 +5,7 @@ from app.utils.make_meta import make_meta
 from fastapi import APIRouter, Query, Path, Body, HTTPException
 from app.utils.db import get_db_connection
 from app.api.notify.send_email import send_email_resend
+from app.utils.email_templates import goldlabel_email
 
 router = APIRouter()
 base_url = os.getenv("BASE_URL", "http://localhost:8000")
@@ -62,7 +63,7 @@ def send_email(request: EmailRequest):
     result = send_email_resend(
         to=request.to,
         subject=request.subject,
-        html=request.html
+        html=goldlabel_email(request.subject, request.html),
     )
     if "error" in result:
         meta = make_meta("error", result["error"])
